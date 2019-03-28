@@ -1,4 +1,5 @@
 from queue import Queue
+from threading import Event
 
 from SpeechExtractor import SpeechExtractor
 from TextExtractor import TextExtractor
@@ -6,18 +7,12 @@ from flask import Flask, jsonify
 import atexit
 
 app = Flask(__name__)
+THREADS = [SpeechExtractor, TextExtractor]
 
 
-def create_app():
+def create_app(stop_event):
     cache_dict = {}
     app = Flask(__name__)
-
-    def interrupt():
-        global speech_extractor_thread
-        global text_extractor_thread
-
-        speech_extractor_thread.cancel()
-        text_extractor_thread.cancel()
 
     @app.route('/')
     def root():
@@ -28,22 +23,23 @@ def create_app():
         return jsonify(cache_dict)
 
     def create_extractors():
-        global speech_extractor_thread
-        global text_extractor_thread
         q = Queue()
-        speech_extractor_thread = SpeechExtractor(q, cache_dict)
-        text_extractor_thread = TextExtractor(q, cache_dict)
-        speech_extractor_thread.start()
-        text_extractor_thread.start()
+        threads = [T(q, cache_dict, stop_event) for T in THREADS]
+        for t in threads:
+            t.start()
+        return threads
 
     # Initiate
-    create_extractors()
-    atexit.register(interrupt)
+    threads = create_extractors()
 
-
-    return app
+    return app, threads
 
 
 if __name__ == '__main__':
-    app = create_app()
+    stop_event = Event();
+    app, threads = create_app(stop_event)
     app.run(host="0.0.0.0")
+    print('stopping...')
+    stop_event.set()
+    for thread in threads:
+        thread.join()
