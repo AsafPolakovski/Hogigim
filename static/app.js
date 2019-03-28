@@ -5,8 +5,21 @@ angular.module('hogigimApp', [])
         app.interval_promise = null;
         app.state = {};
 
+        update_state = function(new_state) {
+            app.state = Object.assign(app.state, new_state);
+        }
+
         pool_state = function() {
             console.log("Polling...");
+            $http.get('/status').then(
+                function (result) {
+                    console.log("poll success", result);
+                    update_state(result.data);
+                },
+                function (result) {
+                    console.log("poll failure", result);
+                }
+            )
         }
 
         app.cancel_session = function() {
@@ -36,6 +49,6 @@ angular.module('hogigimApp', [])
                     app.start_session();
                 }
             }
-            console.log(event);
+            console.log("Key pressed:", event);
         };
     });

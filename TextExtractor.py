@@ -1,4 +1,5 @@
 import threading
+import time
 
 
 class TextExtractor(threading.Thread):
@@ -12,6 +13,7 @@ class TextExtractor(threading.Thread):
         while True:
             val = self.queue.get()
             self.action(val)
+            time.sleep(0.01)
 
     def action(self, message):
         pass

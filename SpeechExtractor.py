@@ -1,4 +1,5 @@
 import threading
+import time
 
 
 class SpeechExtractor(threading.Thread):
@@ -11,4 +12,5 @@ class SpeechExtractor(threading.Thread):
         print(threading.currentThread().getName())
         while True:
             self.queue.put("Send Message to Text Extractor")
-            self.cache_dict["raw_text"] = "GAL BRAUNNN"
+            self.cache_dict["raw_text"] = "GAL BRAUNNN" + str(time.time())
+            time.sleep(0.01)

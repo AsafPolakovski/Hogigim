@@ -2,7 +2,7 @@ from queue import Queue
 
 from SpeechExtractor import SpeechExtractor
 from TextExtractor import TextExtractor
-from flask import Flask
+from flask import Flask, jsonify
 import atexit
 
 app = Flask(__name__)
@@ -25,7 +25,7 @@ def create_app():
 
     @app.route('/status')
     def get_status():
-        return cache_dict.__str__()
+        return jsonify(cache_dict)
 
     def create_extractors():
         global speech_extractor_thread
