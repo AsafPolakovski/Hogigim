@@ -3,6 +3,7 @@ from queue import Queue
 from SpeechExtractor import SpeechExtractor
 from TextExtractor import TextExtractor
 from flask import Flask
+from flask import render_template
 import atexit
 
 app = Flask(__name__)
@@ -18,6 +19,10 @@ def create_app():
 
         speech_extractor_thread.cancel()
         text_extractor_thread.cancel()
+
+    @app.route('/')
+    def index_html():
+        return render_template('index.html')
 
     @app.route('/status')
     def get_status():
