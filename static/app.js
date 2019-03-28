@@ -45,9 +45,8 @@ angular.module('hogigimApp', [])
 
         app.start_session = function () {
             $http.get('/start?user_id=' + app.user_id).then(
-                function (results) {
+                function () {
                     console.log("Session started...");
-                    app.state = Object.assign(app.state, results.data.data);
                     app.interval_promise = $interval(pool_state, 1000);
                     app.active = true;
                 },

@@ -70,7 +70,8 @@ def create_app():
         for t in new_threads:
             t.start()
         threads.extend(new_threads)
-        return jsonify({'success': True, 'data': USERS[user_id]})
+        cache_dict.update(USERS[user_id])
+        return jsonify({'success': True})
 
     @app.route('/stop')
     def stop_threads():
