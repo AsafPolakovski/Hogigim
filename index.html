@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="en" ng-app="hogigimApp">
 <head>
     <meta charset="UTF-8">
     <title>Hogigim</title>
     <script src="static/angular.min.js"></script>
     <script src="static/app.js"></script>
 </head>
-<body ng-controller="MainController as app">
+<body ng-controller="MainController as app" ng-keypress="app.key_pressed($event)">
 {{ app.state }}
 </body>
 </html>
