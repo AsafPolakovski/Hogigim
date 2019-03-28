@@ -10,9 +10,12 @@ app = Flask(__name__)
 THREADS = [SpeechExtractor, TextExtractor]
 
 
-def create_app(stop_event):
+def create_app():
     cache_dict = {}
     app = Flask(__name__)
+    q = Queue()
+    stop_event = Event()
+    threads = []
 
     @app.route('/')
     def root():
@@ -22,24 +25,33 @@ def create_app(stop_event):
     def get_status():
         return jsonify(cache_dict)
 
-    def create_extractors():
-        q = Queue()
-        threads = [T(q, cache_dict, stop_event) for T in THREADS]
-        for t in threads:
+    @app.route('/start')
+    def start_threads():
+        new_threads = [T(q, cache_dict, stop_event) for T in THREADS]
+        for t in new_threads:
             t.start()
-        return threads
+        threads.extend(new_threads)
+        return jsonify({'success': True})
 
-    # Initiate
-    threads = create_extractors()
+    @app.route('/stop')
+    def stop_threads():
+        stop_event.set()
+        for t in threads:
+            t.join()
+        threads.clear()
+        stop_event.clear()
+        return jsonify({'success': True})
 
-    return app, threads
+    def _app_stop():
+        stop_event.set()
+        for thread in threads:
+            thread.join()
+
+    return app, _app_stop
 
 
 if __name__ == '__main__':
-    stop_event = Event();
-    app, threads = create_app(stop_event)
+    app, stop = create_app()
     app.run(host="0.0.0.0")
     print('stopping...')
-    stop_event.set()
-    for thread in threads:
-        thread.join()
+    stop()
