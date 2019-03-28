@@ -1,19 +1,26 @@
 angular.module('hogigimApp', [])
     .controller('MainController', function($http, $interval) {
-        var app = this;
+        let app = this;
         app.active = false;
         app.interval_promise = null;
         app.state = {};
+        app.user_id = "1";
 
-        update_state = function(new_state) {
-            app.state = Object.assign(app.state, new_state);
+        let handle_diff = function(diff_obj) {
+            console.log(diff_obj);
         };
 
-        pool_state = function() {
+        let update_state = function (new_state) {
+            let old_state = Object.assign({}, app.state);
+            app.state = Object.assign(app.state, new_state);
+            handle_diff(DeepDiff(app.state, old_state));
+        };
+
+        let pool_state = function () {
             console.log("Polling...");
             $http.get('/status').then(
                 function (result) {
-                    console.log("poll success", result);
+                    // console.log("poll success", result);
                     update_state(result.data);
                 },
                 function (result) {
@@ -37,15 +44,9 @@ angular.module('hogigimApp', [])
         };
 
         app.start_session = function () {
-            $http.get('/start').then(
+            $http.get('/start?user_id=' + app.user_id).then(
                 function () {
                     console.log("Session started...");
-                    app.state = Object.assign(app.state, {
-                        'first_name': 'Kobe',
-                        'last_name': 'Bryant',
-                        'height': '1.98m',
-                        'weight': '96kg',
-                    });
                     app.interval_promise = $interval(pool_state, 1000);
                     app.active = true;
                 },
@@ -61,6 +62,10 @@ angular.module('hogigimApp', [])
                     app.cancel_session();
                 } else {
                     app.start_session();
+                }
+            } else {
+                if (event.charCode >= 0x31 && event.charCode <= 0x36) {
+                    app.user_id = event.key;
                 }
             }
             console.log("Key pressed:", event);
