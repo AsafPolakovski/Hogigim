@@ -33,6 +33,7 @@ class TextExtractor(Worker):
         tokenizer = nltk.RegexpTokenizer(r'\w+')
         tokens = tokenizer.tokenize(sentence)
         for t in tokens:
+            t = t.lower()
             if t in self.symptoms and t not in self.cache_dict['symptoms']:
                 self.cache_dict['symptoms'].append(t)
 
@@ -40,6 +41,7 @@ class TextExtractor(Worker):
         tokenizer = nltk.RegexpTokenizer(r'\w+')
         tokens = tokenizer.tokenize(sentence)
         for i, t in enumerate(tokens, start=1):
+            t = t.lower()
             if t in self.diseases and t not in self.cache_dict['diseases']:
                 self.cache_dict['diseases'].append(t)
             elif t in self.drugs and t not in self.cache_dict['drugs']:
