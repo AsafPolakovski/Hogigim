@@ -16,6 +16,7 @@ class TextExtractor(Worker):
         self.cache_dict['drugs'] = []
         self.cache_dict['symptoms'] = []
         self.cache_dict['vitals'] = []
+        self.cache_dict["body_parts"] = []
         self.tokenizer = nltk.RegexpTokenizer(r'\w+')
         self.body_parts = body_parts
 
@@ -70,7 +71,10 @@ class TextExtractor(Worker):
                     self.cache_dict['hear_rate'] = num+"bpm"
                 elif t == "temperature":
                     self.cache_dict['temperature'] = num+"c"
+            elif t in self.body_parts and t not in self.cache_dict["body_parts"]:
+                self.cache_dict["body_parts"].append(t)
         print(self.cache_dict)
+
 
     def find_num(self, tokens, skip=0):
         for t in tokens:
