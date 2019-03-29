@@ -8,13 +8,48 @@
     <script src="static/angular.min.js"></script>
     <script src="static/app.js"></script>
     <script src="static/deep-diff.min.js"></script>
+<!--    <script src="static/fade.js"></script>-->
     <link rel="stylesheet" href="static/style.css">
     <link rel="stylesheet" href="static/waves.css">
+    <link rel="stylesheet" href="static/fade.css">
+    <link href="https://fonts.googleapis.com/css?family=Barlow" rel="stylesheet">
 </head>
 <body ng-controller="MainController as app" ng-keypress="app.key_pressed($event)">
-<span class="text">
+<div class="text" style="color: #fff;">
     {{ app.state }}
-</span>
-<canvas></canvas>
+</div>
+<!--<button class="toggleButton" ng-click="app.click()" style="position: absolute;">go</button>-->
+
+    <div class="animate one fadeIn">
+        <div class="value-badge-wrapper">
+            <div class="value-badge" ng-repeat="vital in app.vitals">
+                <span class="value-badge-title">{{vital.title}} : {{vital.value}}</span>
+            </div>
+        </div>
+        <div class="symptoms-value-badge-wrapper">
+            <div class="symptoms-value-badge" ng-repeat="symptom in app.symptoms">
+                <span class="symptoms-value-badge-title">{{symptom.title}}</span>
+            </div>
+        </div>
+        <div class="medicines-value-badge-wrapper">
+            <div class="medicines-value-badge" ng-repeat="medicine in app.medicines">
+                <span class="medicines-value-badge-title">{{medicine.title}}</span>
+            </div>
+            <div class="diseases-value-badge" ng-repeat="disease in app.diseases">
+                <span class="diseases-value-badge-title">{{disease.title}}</span>
+            </div>
+        </div>
+    </div>
+    <div>
+    <!--  <h1 class="cssanimation sequence leFadeInBottom" ng-show="app.popup_shown">{{app.mainText}}</h1>-->
+        <h1 class="animate one" ng-class="{fadeInUp: app.popup_shown, fadeOut: !app.popup_shown}">{{app.mainText}}</h1>
+    <!--    <div class="box-wrap">-->
+    <!--    <div class="box animate fadeInUp one">-->
+    <!--    {{app.mainText}}-->
+    <!--    </div>-->
+    <!--    </div>-->
+    </div>
+    <!--<div id="text" class="main-text" ng-class="{hidden: !app.popup_shown}">{{app.mainText}}</div>-->
+    <canvas class="waves"></canvas>
 </body>
 </html>

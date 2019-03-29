@@ -1,0 +1,154 @@
+.waves {
+    display: block;
+    height: 100%;
+    top: 32%;
+}
+
+.medical-info-title {
+    margin-top: 25px;
+    font-size: 21px;
+    text-align: center;
+    animation: fadein 2s;
+    -moz-animation: fadein 2s; /* Firefox */
+    -webkit-animation: fadein 2s; /* Safari and Chrome */
+    -o-animation: fadein 2s; /* Opera */
+}
+@keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-moz-keyframes fadein { /* Firefox */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-webkit-keyframes fadein { /* Safari and Chrome */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-o-keyframes fadein { /* Opera */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+.main-text {
+    font-size: 40px;
+    color: blue;
+}
+
+
+.value-badge {
+    display: inline-block;
+    color: #91afaf;
+    border: 1px #486f6f solid;
+    border-radius: 45px;
+    padding: 14px 35px;
+    font-family: 'Barlow', sans-serif;
+    margin: 10px;
+}
+
+.value-badge-title {
+    display: block;
+    font-size: 24px;
+}
+
+.value-badge-text {
+    display: block;
+    font-size: 55px;
+}
+
+.value-badge-wrapper {
+    text-align: center;
+}
+
+
+
+.symptoms-value-badge {
+    display: inline-block;
+    color: #af91ab;
+    border: 1px #64486f solid;
+    border-radius: 45px;
+    padding: 14px 35px;
+    font-family: 'Barlow', sans-serif;
+    margin: 10px;
+}
+
+.symptoms-value-badge-title {
+    display: block;
+    font-size: 24px;
+}
+
+.symptoms-value-badge-text {
+    display: block;
+    font-size: 55px;
+}
+
+.symptoms-value-badge-wrapper {
+    text-align: center;
+}
+
+
+
+.medicines-value-badge {
+    display: inline-block;
+    color: #afac91;
+    border: 1px #6c6f48 solid;
+    border-radius: 45px;
+    padding: 14px 35px;
+    font-family: 'Barlow', sans-serif;
+    margin: 10px;
+}
+
+.medicines-value-badge-title {
+    display: block;
+    font-size: 24px;
+}
+
+.medicines-value-badge-text {
+    display: block;
+    font-size: 55px;
+}
+
+.medicines-value-badge-wrapper {
+    text-align: center;
+}
+
+.diseases-value-badge {
+    display: inline-block;
+    color: #af9191;
+    border: 1px #6f4848 solid;
+    border-radius: 45px;
+    padding: 14px 35px;
+    font-family: 'Barlow', sans-serif;
+    margin: 10px;
+}
+
+.diseases-value-badge-title {
+    display: block;
+    font-size: 24px;
+}
+
+.diseases-value-badge-text {
+    display: block;
+    font-size: 55px;
+}
+
+.diseases-value-badge-wrapper {
+    text-align: center;
+}

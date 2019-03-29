@@ -1,12 +1,70 @@
 angular.module('hogigimApp', [])
-    .controller('MainController', function($http, $interval) {
+    .controller('MainController', function($http, $interval, $timeout, $scope) {
         let app = this;
         app.active = false;
         app.interval_promise = null;
         app.state = {};
         app.user_id = "1";
+        app.popup_text = "";
+        app.popup_shown = false;
+        app.mainText = "";
+
+        app.vitals = [];
+        app.symptoms = [];
+        app.medicines = [];
+        app.diseases = [];
+
 
         let handle_diff = function(diff_obj) {
+            if (!diff_obj) return;
+            if (!diff_obj[0].rhs) return;
+            var newValue = diff_obj[0].rhs;
+            var pathName = "";
+            var pathCategory = "";
+            switch(diff_obj[0].path[0]) {
+              case 'height':
+                pathName = "Height";
+                pathCategory = vitals;
+                break;
+              case 'weight':
+                pathName = "Weight";
+                pathCategory = vitals;
+                break;
+              case 'heart_rate':
+                pathName = "Heart Rate";
+                pathCategory = vitals;
+                break;
+              case 'blood_pressure':
+                pathName = "Blood Pressure";
+                pathCategory = vitals;
+                break;
+              case 'symptoms':
+                pathName = "Symptom";
+                pathCategory = symptoms;
+                break;
+              case 'drugs':
+                pathName = "Medicine";
+                pathCategory = medicines;
+                break;
+              case 'diseases':
+                pathName = "Diseases";
+                pathCategory = diseases;
+                break;
+              default:
+                pathName = "";
+            }
+
+            if (pathCategory === vitals) {
+                vitals.push({
+                    title: pathName,
+                    value: newValue
+                })
+            } else {
+                pathCategory.push({
+                    title: newValue
+                })
+            }
+            app.mainText = pathName + ": " + newValue;
             console.log(diff_obj);
         };
 
@@ -70,6 +128,19 @@ angular.module('hogigimApp', [])
             }
             console.log("Key pressed:", event);
         };
+
+
+        app.click = function() {
+            app.mainText = "Weight: 72kg";
+        }
+        $scope.$watch('app.mainText', function(){
+            if (!app.mainText)
+                return
+            app.popup_shown = true;
+                $timeout(function() {
+                    app.popup_shown = false;
+                }, 3000);
+        });
 
         var canvas = document.querySelector('canvas'),
     ctx = canvas.getContext('2d'),
@@ -239,7 +310,7 @@ if (navigator.getUserMedia) {
           sum += input[i] * input[i];
         }
 
-        speedTween.stop().to({ s: sum / 80 }, 400).start()
+        speedTween.stop().to({ s: sum / 120 }, 500).start()
       }
     },
     function(){}
@@ -247,4 +318,5 @@ if (navigator.getUserMedia) {
 }
 
 
-    });
+    })
+    ;
