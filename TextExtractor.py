@@ -10,7 +10,7 @@ class TextExtractor(Worker):
     def __init__(self, queue, cache_dict, stop_event, body_parts=[]):
         super().__init__(queue, cache_dict, stop_event)
         self.diseases, self.symptoms, self.drugs = self.load_data()
-        self.vitals = ["temperature", "pulse", "blood pressure", "height", "weight"]
+        self.vitals = ["temperature", "heart_rate", "blood_pressure", "height", "weight"]
         self.cache_dict['diseases'] = []
         self.cache_dict['drugs'] = []
         self.cache_dict['symptoms'] = []
@@ -53,25 +53,42 @@ class TextExtractor(Worker):
                 self.cache_dict['diseases'].append(t)
             elif t in self.drugs and t not in self.cache_dict['drugs']:
                 num = self.find_num(tokens)
-                self.cache_dict['drugs'].append(t + " %s" % num)
-            elif t in self.vitals and t not in self.cache_dict['vitals']:
-                if tokens[i - 2] == 'high' or tokens[i - 2] == 'low':
-                    t = tokens[i - 2] + " " + t
+                if num is not None:
+                    t = t + " " + num
+                self.cache_dict['drugs'].append(t + " %s" % num )
+            elif t in self.vitals:
+                if tokens[i-2] == 'high' or tokens[i-2] == 'low':
+                    self.cache_dict['diseases'].append(tokens[i-2] + " " + t)
                 num = self.find_num(tokens)
+                if t == "height":
+                    self.cache_dict['height'].append(num+"m")
+                elif t == "width":
+                    self.cache_dict['width'].append(num+"kg")
+                elif t == "blood_pressure":
+                    num2 = self.find_num(tokens, 1)
+                    self.cache_dict['blood_pressure'].append(num+" / "+num2)
+                elif t == "heart_rate":
+                    self.cache_dict['hear_rate'].append(num+"bpm")
+                elif t == "heart rate":
+                    self.cache_dict['temperature'].append(num+"c")
                 self.cache_dict['vitals'].append(t + " %s" % num)
             elif t in self.body_parts and t not in self.cache_dict["body_parts"]:
                 self.cache_dict["body_parts"].append(t)
 
 
-    def find_num(self, tokens):
+    def find_num(self, tokens, skip=0):
         for t in tokens:
             if is_number(t):
+                if skip:
+                    skip -= 1
+                    continue
                 return t
 
     def find_negate(self, start, end):
         pass
 
-    def load_data(self):
+    @staticmethod
+    def load_data():
         with open('data.csv', encoding="utf8", errors='ignore') as f:
             # read the file as a dictionary for each row ({header : value})
             reader = csv.DictReader(f)
