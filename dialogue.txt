@@ -1,0 +1,26 @@
+Doctor: Good evening James
+Patient: Good evening doctor
+Doctor: How can i help you?
+Patient: i didn't feel good in the last few days, i had high temperture
+Doctor: Let first verify your details in the system
+Patient: let do it
+Doctor: i see that your weight is 89 
+Patient: correct
+Doctor: and your height is 186
+Patient: I didn't remember being that high
+Doctor: Apprently you are. Do you have other symptomps i should know about?
+Patient: i also caugh a lot, espcially in the last few days.
+Doctor: Anything else?
+Patient: I also vomited few times in the last days
+Doctor: I think you may have a fever
+Patient: What should i do Doctor?
+Doctor: You should rest, and take 2 milgram of aspirin
+Patient: Thank you very much
+Doctor: Before you go, i see you were diagnosed with hiv recently
+Patient: yeah, is there any problem?
+Doctor: No, i just wanted to know how you feel?
+Patient: Besides the pain? everything else is ok
+Doctor: Maybe you start using sustiva. it will help you with the pain.
+Patient: Thanks doctor
+Doctor: You are welcome! good night!
+Patient: Good Night

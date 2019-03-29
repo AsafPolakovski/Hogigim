@@ -20,8 +20,8 @@ class TextExtractor(Worker):
             sentence = message[1]
             speaker = message[0]
             self.action(sentence, speaker)
-        except Exception:
-            print("GAL IS A FAILURE")
+        except Exception as e:
+            print("GAL IS A FAILURE - ", e)
 
     def action(self, sentence, speaker):
         if speaker.lower() == "patient":
@@ -46,12 +46,16 @@ class TextExtractor(Worker):
                 self.cache_dict['diseases'].append(t)
             elif t in self.drugs and t not in self.cache_dict['drugs']:
                 num = self.find_num(tokens)
+                if num is not None:
+                    t = t + " " + num
                 self.cache_dict['drugs'].append(t + " %s" % num )
             elif t in self.vitals and t not in self.cache_dict['vitals']:
                 if tokens[i-2] == 'high' or tokens[i-2] == 'low':
                     t = tokens[i-2] + " " + t
                 num = self.find_num(tokens)
-                self.cache_dict['vitals'].append(t + " %s" % num )
+                if num is not None:
+                    t = t + " " + num
+                self.cache_dict['vitals'].append(t)
 
     def find_num(self, tokens):
         for t in tokens:
