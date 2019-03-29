@@ -4,6 +4,7 @@ import io
 import time
 import os
 
+
 def transcribe_streaming_from_file(speech_file):
     """Transcribe the given audio file."""
     from google.cloud import speech_v1p1beta1 as speech
@@ -46,22 +47,17 @@ class SpeechExtractor(Worker):
                 self.speech_queue.put(audio)
 
 
-        #self.queue.put("Send Message to Text Extractor")
-        #self.cache_dict["raw_text"] = "GAL BRAUNNN" + str(time.time())
-
-
-
-
 class GoogleHandler(Worker):
     def __init__(self, queue, cache_dict, stop_event, speech_queue):
         self.speech_queue = speech_queue
         self.speaker = 'Doctor'
         super().__init__(queue, cache_dict, stop_event)
+        self.cache_dict["transcript"] = ""  # setup transcript
 
     def _step(self):
         try:
                 audio = self.speech_queue.get()
-                file_name = os.path.join('wav_files',str(time.time()) + '.wav')
+                file_name = os.path.join('wav_files', str(time.time()) + '.wav')
                 with open(file_name, "wb") as f:
                     # print('saving file')
                     f.write(audio.get_wav_data())
@@ -69,14 +65,10 @@ class GoogleHandler(Worker):
                     text = transcribe_streaming_from_file(file_name)
                     print("speech", self.speaker, text)
                     self.queue.put((self.speaker, text))
-                    self.cache_dict["raw_text"] = "SPEAECHEXTRACTOR_{}|{}".format(self.speaker, text)
+                    self.cache_dict["transcript"] += "{}: {}\n".format(self.speaker, text)
                     if self.speaker == 'Doctor':
                         self.speaker = 'Patient'
                     else:
                         self.speaker = 'Doctor'
         except Exception as e:
             self.queue.put(('exception', str(e)))
-
-
-        #self.queue.put("Send Message to Text Extractor")
-        #self.cache_dict["raw_text"] = "GAL BRAUNNN" + str(time.time())
