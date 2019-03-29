@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Hogigim</title>
+    <script src="static/Tween.js"></script>
+    <script src="static/jquery-3.3.1.min.js"></script>
     <script src="static/angular.min.js"></script>
     <script src="static/app.js"></script>
+    <script src="static/deep-diff.min.js"></script>
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="static/waves.css">
 </head>
 <body ng-controller="MainController as app" ng-keypress="app.key_pressed($event)">
-{{ app.state }}
+<span class="text">
+    {{ app.state }}
+</span>
+<canvas></canvas>
 </body>
 </html>

@@ -3,16 +3,57 @@ from threading import Event
 
 from SpeechExtractor import SpeechExtractor
 from TextExtractor import TextExtractor
-from flask import Flask, jsonify
-import atexit
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 THREADS = [SpeechExtractor, TextExtractor]
 
+USERS = {
+    1: {
+        'first_name': 'Kobe',
+        'last_name': 'Bryant',
+        'height': '1.98m',
+        'weight': '96kg',
+    },
+    2: {
+        'first_name': 'Asaf',
+        'last_name': 'Polakovsy',
+        'height': None,
+        'weight': None,
+    },
+    3: {
+        'first_name': 'Sharon',
+        'last_name': 'Yogev',
+        'height': '1.89m',
+        'weight': '90kg',
+    },
+    4: {
+        'first_name': 'Or',
+        'last_name': 'Troyaner',
+        'height': None,
+        'weight': None,
+    },
+    5: {
+        'first_name': 'Gal',
+        'last_name': 'Braun',
+        'height': None,
+        'weight': None,
+    },
+    6: {
+        'first_name': 'Ron',
+        'last_name': 'Likovnik',
+        'height': None,
+        'weight': None,
+    },
+}
 
-def create_app(stop_event):
+
+def create_app():
     cache_dict = {}
     app = Flask(__name__)
+    q = Queue()
+    stop_event = Event()
+    threads = []
 
     @app.route('/')
     def root():
@@ -22,24 +63,35 @@ def create_app(stop_event):
     def get_status():
         return jsonify(cache_dict)
 
-    def create_extractors():
-        q = Queue()
-        threads = [T(q, cache_dict, stop_event) for T in THREADS]
-        for t in threads:
+    @app.route('/start')
+    def start_threads():
+        user_id = int(request.args.get('user_id', '1'))
+        new_threads = [T(q, cache_dict, stop_event) for T in THREADS]
+        for t in new_threads:
             t.start()
-        return threads
+        threads.extend(new_threads)
+        cache_dict.update(USERS[user_id])
+        return jsonify({'success': True})
 
-    # Initiate
-    threads = create_extractors()
+    @app.route('/stop')
+    def stop_threads():
+        stop_event.set()
+        for t in threads:
+            t.join()
+        threads.clear()
+        stop_event.clear()
+        return jsonify({'success': True})
 
-    return app, threads
+    def _app_stop():
+        stop_event.set()
+        for thread in threads:
+            thread.join()
+
+    return app, _app_stop
 
 
 if __name__ == '__main__':
-    stop_event = Event();
-    app, threads = create_app(stop_event)
+    app, stop = create_app()
     app.run(host="0.0.0.0")
     print('stopping...')
-    stop_event.set()
-    for thread in threads:
-        thread.join()
+    stop()
