@@ -51,7 +51,7 @@ class SpeechExtractor(Worker):
                 else:
                     speaker = 'Doctor'
         except Exception as e:
-            self.queue.put(('exception', e.message))
+            self.queue.put(('exception', str(e)))
 
 
         #self.queue.put("Send Message to Text Extractor")
