@@ -28,7 +28,6 @@ def create_app():
 
     @app.route('/status')
     def get_status():
-        #print(cache_dict.__str__())
         return jsonify(cache_dict)
 
     @app.route('/start')
@@ -36,7 +35,7 @@ def create_app():
         cache_dict.clear()
         new_threads = [T(q, cache_dict, stop_event, speech_queue) for T in SPEECH_THREADS]
         new_threads.append(TextExtractor(q, cache_dict, stop_event))
-        new_threads.append(ConsoleReader(q, cache_dict, stop_event))
+        # new_threads.append(ConsoleReader(q, cache_dict, stop_event))
         for t in new_threads:
             t.start()
         threads.extend(new_threads)
