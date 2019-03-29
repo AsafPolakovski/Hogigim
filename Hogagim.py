@@ -1,12 +1,12 @@
 from queue import Queue
 from threading import Event
 
-from SpeechExtractor import SpeechExtractor
+from SpeechExtractor import SpeechExtractor, GoogleHandler
 from TextExtractor import TextExtractor
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
-THREADS = [SpeechExtractor, TextExtractor]
+SPEECH_THREADS = [SpeechExtractor, GoogleHandler]
 
 USERS = {
     1: {
@@ -52,6 +52,7 @@ def create_app():
     cache_dict = {}
     app = Flask(__name__)
     q = Queue()
+    speech_queue = Queue()
     stop_event = Event()
     threads = []
 
@@ -61,12 +62,14 @@ def create_app():
 
     @app.route('/status')
     def get_status():
+        #print(cache_dict.__str__())
         return jsonify(cache_dict)
 
     @app.route('/start')
     def start_threads():
         user_id = int(request.args.get('user_id', '1'))
-        new_threads = [T(q, cache_dict, stop_event) for T in THREADS]
+        new_threads = [T(q, cache_dict, stop_event, speech_queue) for T in SPEECH_THREADS]
+        new_threads.append(TextExtractor(q, cache_dict, stop_event))
         for t in new_threads:
             t.start()
         threads.extend(new_threads)
