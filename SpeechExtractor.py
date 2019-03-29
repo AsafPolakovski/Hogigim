@@ -1,4 +1,3 @@
-import time
 from utils import Worker
 import speech_recognition as sr
 import io
