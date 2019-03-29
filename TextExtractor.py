@@ -55,6 +55,7 @@ class TextExtractor(Worker):
 
     def find_negate(self, start, end):
         pass
+
     def load_data(self):
         with open('data.csv', encoding="utf8", errors='ignore') as f:
             # read the file as a dictionary for each row ({header : value})
