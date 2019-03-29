@@ -15,15 +15,18 @@ class TextExtractor(Worker):
         self.cache_dict['vitals'] = []
 
     def _step(self):
-        message = self.queue.get()
-        sentence = message[1]
-        speaker = message[0]
-        self.action(sentence, speaker)
+        try:
+            message = self.queue.get()
+            sentence = message[1]
+            speaker = message[0]
+            self.action(sentence, speaker)
+        except Exception:
+            print("GAL IS A FAILURE")
 
     def action(self, sentence, speaker):
-        if speaker == "patient":
+        if speaker.lower() == "patient":
             self.patient_action(sentence)
-        elif speaker == "doctor":
+        elif speaker.lower() == "doctor":
             self.doctor_action(sentence)
 
     def patient_action(self, sentence):
