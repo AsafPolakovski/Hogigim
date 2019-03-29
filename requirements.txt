@@ -1,5 +1,6 @@
 flask
 google-cloud-speech
+nltk
 PyAudio
 SpeechRecognition
 numpy

@@ -9,44 +9,49 @@ class TextExtractor(Worker):
         super().__init__(queue, cache_dict, stop_event)
         self.diseases, self.symptoms, self.drugs = self.load_data()
         self.vitals = ["temperature", "pulse", "blood pressure", "height", "weight"]
-        self.cache_dict['diseases'] = set()
-        self.cache_dict['drugs'] = set()
-        self.cache_dict['symptoms'] = set()
-        self.cache_dict['vitals'] = set()
+        self.cache_dict['diseases'] = []
+        self.cache_dict['drugs'] = []
+        self.cache_dict['symptoms'] = []
+        self.cache_dict['vitals'] = []
 
     def _step(self):
-        message = self.queue.get()
-        sentence = message[1]
-        speaker = message[0]
-        self.action(sentence, speaker)
+        try:
+            message = self.queue.get()
+            sentence = message[1]
+            speaker = message[0]
+            self.action(sentence, speaker)
+        except Exception:
+            print("GAL IS A FAILURE")
 
     def action(self, sentence, speaker):
-        if speaker == "patient":
+        if speaker.lower() == "patient":
             self.patient_action(sentence)
-        elif speaker == "doctor":
+        elif speaker.lower() == "doctor":
             self.doctor_action(sentence)
 
     def patient_action(self, sentence):
         tokenizer = nltk.RegexpTokenizer(r'\w+')
         tokens = tokenizer.tokenize(sentence)
         for t in tokens:
-            if t in self.symptoms:
-                self.cache_dict['symptoms'].add(t)
+            t = t.lower()
+            if t in self.symptoms and t not in self.cache_dict['symptoms']:
+                self.cache_dict['symptoms'].append(t)
 
     def doctor_action(self, sentence):
         tokenizer = nltk.RegexpTokenizer(r'\w+')
         tokens = tokenizer.tokenize(sentence)
         for i, t in enumerate(tokens, start=1):
-            if t in self.diseases:
-                self.cache_dict['diseases'].add(t)
-            elif t in self.drugs:
+            t = t.lower()
+            if t in self.diseases and t not in self.cache_dict['diseases']:
+                self.cache_dict['diseases'].append(t)
+            elif t in self.drugs and t not in self.cache_dict['drugs']:
                 num = self.find_num(tokens)
-                self.cache_dict['drugs'].add(t + " %s" % num )
-            elif t in self.vitals:
+                self.cache_dict['drugs'].append(t + " %s" % num )
+            elif t in self.vitals and t not in self.cache_dict['vitals']:
                 if tokens[i-2] == 'high' or tokens[i-2] == 'low':
                     t = tokens[i-2] + " " + t
                 num = self.find_num(tokens)
-                self.cache_dict['vitals'].add(t + " %s" % num )
+                self.cache_dict['vitals'].append(t + " %s" % num )
 
     def find_num(self, tokens):
         for t in tokens:
@@ -55,6 +60,7 @@ class TextExtractor(Worker):
 
     def find_negate(self, start, end):
         pass
+
     def load_data(self):
         with open('data.csv', encoding="utf8", errors='ignore') as f:
             # read the file as a dictionary for each row ({header : value})
