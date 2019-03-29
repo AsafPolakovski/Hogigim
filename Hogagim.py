@@ -3,7 +3,12 @@ from threading import Event
 
 from SpeechExtractor import SpeechExtractor, GoogleHandler
 from TextExtractor import TextExtractor
+from ConsoleText import ConsoleReader
 from flask import Flask, jsonify, request
+
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 app = Flask(__name__)
 SPEECH_THREADS = [SpeechExtractor, GoogleHandler]
@@ -70,6 +75,7 @@ def create_app():
         user_id = int(request.args.get('user_id', '1'))
         new_threads = [T(q, cache_dict, stop_event, speech_queue) for T in SPEECH_THREADS]
         new_threads.append(TextExtractor(q, cache_dict, stop_event))
+        new_threads.append(ConsoleReader(q, cache_dict, stop_event))
         for t in new_threads:
             t.start()
         threads.extend(new_threads)
