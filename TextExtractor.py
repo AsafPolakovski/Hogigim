@@ -24,8 +24,8 @@ class TextExtractor(Worker):
             sentence = message[1]
             speaker = message[0]
             self.action(sentence, speaker)
-        except Exception:
-            print("GAL IS A FAILURE")
+        except Exception as e:
+            print("GAL IS A FAILURE - ", e)
 
     def action(self, sentence, speaker):
         if speaker.lower() == "patient":
