@@ -43,7 +43,6 @@ class TextExtractor(Worker):
                 self.cache_dict['symptoms'].append(t)
 
     def doctor_action(self, sentence):
-
         tokens = self.tokenizer.tokenize(sentence)
         for i, t in enumerate(tokens, start=1):
             t = t.lower()

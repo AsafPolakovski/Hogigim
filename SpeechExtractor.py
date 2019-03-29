@@ -52,6 +52,7 @@ class GoogleHandler(Worker):
         self.speech_queue = speech_queue
         self.speaker = 'Doctor'
         super().__init__(queue, cache_dict, stop_event)
+        self.cache_dict["transcript"] = ""  # setup transcript
 
     def _step(self):
         try:
@@ -64,7 +65,7 @@ class GoogleHandler(Worker):
                     text = transcribe_streaming_from_file(file_name)
                     print("speech", self.speaker, text)
                     self.queue.put((self.speaker, text))
-                    self.cache_dict["raw_text"] = "SPEAECHEXTRACTOR_{}|{}".format(self.speaker, text)
+                    self.cache_dict["transcript"] += "{}: {}\n".format(self.speaker, text)
                     if self.speaker == 'Doctor':
                         self.speaker = 'Patient'
                     else:
