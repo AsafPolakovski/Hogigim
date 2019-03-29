@@ -13,45 +13,6 @@ log.setLevel(logging.ERROR)
 app = Flask(__name__)
 SPEECH_THREADS = [SpeechExtractor, GoogleHandler]
 
-USERS = {
-    1: {
-        'first_name': 'Kobe',
-        'last_name': 'Bryant',
-        'height': '1.98m',
-        'weight': '96kg',
-    },
-    2: {
-        'first_name': 'Asaf',
-        'last_name': 'Polakovsy',
-        'height': None,
-        'weight': None,
-    },
-    3: {
-        'first_name': 'Sharon',
-        'last_name': 'Yogev',
-        'height': '1.89m',
-        'weight': '90kg',
-    },
-    4: {
-        'first_name': 'Or',
-        'last_name': 'Troyaner',
-        'height': None,
-        'weight': None,
-    },
-    5: {
-        'first_name': 'Gal',
-        'last_name': 'Braun',
-        'height': None,
-        'weight': None,
-    },
-    6: {
-        'first_name': 'Ron',
-        'last_name': 'Likovnik',
-        'height': None,
-        'weight': None,
-    },
-}
-
 
 def create_app():
     cache_dict = {}
@@ -72,14 +33,13 @@ def create_app():
 
     @app.route('/start')
     def start_threads():
-        user_id = int(request.args.get('user_id', '1'))
+        cache_dict.clear()
         new_threads = [T(q, cache_dict, stop_event, speech_queue) for T in SPEECH_THREADS]
         new_threads.append(TextExtractor(q, cache_dict, stop_event))
         new_threads.append(ConsoleReader(q, cache_dict, stop_event))
         for t in new_threads:
             t.start()
         threads.extend(new_threads)
-        cache_dict.update(USERS[user_id])
         return jsonify({'success': True})
 
     @app.route('/stop')

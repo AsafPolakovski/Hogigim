@@ -1,4 +1,5 @@
 import csv
+import traceback
 
 import nltk
 
@@ -24,8 +25,8 @@ class TextExtractor(Worker):
             sentence = message[1]
             speaker = message[0]
             self.action(sentence, speaker)
-        except Exception as e:
-            print("GAL IS A FAILURE - ", e)
+        except Exception:
+            traceback.print_exc()
 
     def action(self, sentence, speaker):
         if speaker.lower() == "patient":
@@ -53,22 +54,23 @@ class TextExtractor(Worker):
                 num = self.find_num(tokens)
                 if num is not None:
                     t = t + " " + num
-                self.cache_dict['drugs'].append(t + " %s" % num )
+                self.cache_dict['drugs'].append(t)
             elif t in self.vitals:
                 if tokens[i-2] == 'high' or tokens[i-2] == 'low':
                     self.cache_dict['diseases'].append(tokens[i-2] + " " + t)
                 num = self.find_num(tokens)
                 if t == "height":
-                    self.cache_dict['height'].append(num+"m")
-                elif t == "width":
-                    self.cache_dict['width'].append(num+"kg")
-                elif t == "blood_pressure":
+                    self.cache_dict['height'] = num+"cm"
+                elif t == "weight":
+                    self.cache_dict['weight'] = num+"kg"
+                elif t == "pressure" and tokens[i-2] == "blood":
                     num2 = self.find_num(tokens, 1)
-                    self.cache_dict['blood_pressure'].append(num+" / "+num2)
-                elif t == "heart_rate":
-                    self.cache_dict['hear_rate'].append(num+"bpm")
-                elif t == "heart rate":
-                    self.cache_dict['temperature'].append(num+"c")
+                    self.cache_dict['blood_pressure'] = num+" / "+num2
+                elif t == "rate" and tokens[i-2] == "heart":
+                    self.cache_dict['hear_rate'] = num+"bpm"
+                elif t == "temperature":
+                    self.cache_dict['temperature'] = num+"c"
+        print(self.cache_dict)
 
     def find_num(self, tokens, skip=0):
         for t in tokens:

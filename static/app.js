@@ -4,7 +4,6 @@ angular.module('hogigimApp', [])
         app.active = false;
         app.interval_promise = null;
         app.state = {};
-        app.user_id = "1";
         app.popup_text = "";
         app.popup_shown = false;
         app.mainText = "";
@@ -16,61 +15,70 @@ angular.module('hogigimApp', [])
 
 
         let handle_diff = function(diff_obj) {
-            if (!diff_obj) return;
-            if (!diff_obj[0].rhs) return;
-            var newValue = diff_obj[0].rhs;
-            var pathName = "";
-            var pathCategory = "";
-            switch(diff_obj[0].path[0]) {
-              case 'height':
-                pathName = "Height";
-                pathCategory = vitals;
-                break;
-              case 'weight':
-                pathName = "Weight";
-                pathCategory = vitals;
-                break;
-              case 'heart_rate':
-                pathName = "Heart Rate";
-                pathCategory = vitals;
-                break;
-              case 'blood_pressure':
-                pathName = "Blood Pressure";
-                pathCategory = vitals;
-                break;
-              case 'symptoms':
-                pathName = "Symptom";
-                pathCategory = symptoms;
-                break;
-              case 'drugs':
-                pathName = "Medicine";
-                pathCategory = medicines;
-                break;
-              case 'diseases':
-                pathName = "Diseases";
-                pathCategory = diseases;
-                break;
-              default:
-                pathName = "";
-            }
-
-            if (pathCategory === vitals) {
-                vitals.push({
-                    title: pathName,
-                    value: newValue
-                })
-            } else {
-                pathCategory.push({
-                    title: newValue
-                })
-            }
-            app.mainText = pathName + ": " + newValue;
             console.log(diff_obj);
+            if (!diff_obj) return;
+            for (let i = 0; i < diff_obj.length; i++) {
+                let newValue = diff_obj[i].lhs;
+                if (diff_obj[i].index !== undefined) {
+                    newValue = diff_obj[i].item.lhs
+                }
+                if (!newValue || newValue.length == 0) continue;
+                let pathName = "";
+                let pathCategory = null;
+                switch(diff_obj[i].path[0]) {
+                  case 'height':
+                    pathName = "Height";
+                    pathCategory = app.vitals;
+                    break;
+                  case 'weight':
+                    pathName = "Weight";
+                    pathCategory = app.vitals;
+                    break;
+                  case 'heart_rate':
+                    pathName = "Heart Rate";
+                    pathCategory = app.vitals;
+                    break;
+                  case 'blood_pressure':
+                    pathName = "Blood Pressure";
+                    pathCategory = app.vitals;
+                    break;
+                  case 'symptoms':
+                    pathName = "Symptom";
+                    pathCategory = app.symptoms;
+                    break;
+                  case 'drugs':
+                    pathName = "Medicine";
+                    pathCategory = app.medicines;
+                    break;
+                  case 'diseases':
+                    pathName = "Diseases";
+                    pathCategory = app.diseases;
+                    break;
+                  default:
+                    continue;
+                }
+                console.log(pathName, newValue);
+
+                if (pathCategory === app.vitals) {
+                    app.vitals.push({
+                        title: pathName,
+                        value: newValue
+                    })
+                } else {
+                    pathCategory.push({
+                        title: newValue
+                    })
+                }
+                app.mainText = pathName + ": " + newValue;
+                return;
+            }
         };
 
         let update_state = function (new_state) {
+            // console.log('Got update:', new_state)
             let old_state = Object.assign({}, app.state);
             app.state = Object.assign(app.state, new_state);
+            // console.log('new_state:', app.state)
             handle_diff(DeepDiff(app.state, old_state));
         };
 
@@ -102,7 +110,7 @@ angular.module('hogigimApp', [])
         };
 
         app.start_session = function () {
-            $http.get('/start?user_id=' + app.user_id).then(
+            $http.get('/start').then(
                 function () {
                     console.log("Session started...");
                     app.interval_promise = $interval(pool_state, 1000);
@@ -120,10 +128,6 @@ angular.module('hogigimApp', [])
                     app.cancel_session();
                 } else {
                     app.start_session();
-                }
-            } else {
-                if (event.charCode >= 0x31 && event.charCode <= 0x36) {
-                    app.user_id = event.key;
                 }
             }
             console.log("Key pressed:", event);

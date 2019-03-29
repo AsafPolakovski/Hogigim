@@ -15,11 +15,6 @@
     <link href="https://fonts.googleapis.com/css?family=Barlow" rel="stylesheet">
 </head>
 <body ng-controller="MainController as app" ng-keypress="app.key_pressed($event)">
-<div class="text" style="color: #fff;">
-    {{ app.state }}
-</div>
-<!--<button class="toggleButton" ng-click="app.click()" style="position: absolute;">go</button>-->
-
     <div class="animate one fadeIn">
         <div class="value-badge-wrapper">
             <div class="value-badge" ng-repeat="vital in app.vitals">
@@ -41,15 +36,8 @@
         </div>
     </div>
     <div>
-    <!--  <h1 class="cssanimation sequence leFadeInBottom" ng-show="app.popup_shown">{{app.mainText}}</h1>-->
         <h1 class="animate one" ng-class="{fadeInUp: app.popup_shown, fadeOut: !app.popup_shown}">{{app.mainText}}</h1>
-    <!--    <div class="box-wrap">-->
-    <!--    <div class="box animate fadeInUp one">-->
-    <!--    {{app.mainText}}-->
-    <!--    </div>-->
-    <!--    </div>-->
     </div>
-    <!--<div id="text" class="main-text" ng-class="{hidden: !app.popup_shown}">{{app.mainText}}</div>-->
     <canvas class="waves"></canvas>
 </body>
 </html>
