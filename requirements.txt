@@ -3,3 +3,5 @@ google-cloud-speech
 nltk
 PyAudio
 SpeechRecognition
+numpy
+tensorflow
