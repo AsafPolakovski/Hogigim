@@ -1,5 +1,7 @@
-from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+
+
 class SentenceComparator:
     def __init__(self, sentences, encoder, threshold=0.5):
         self.encoder = encoder

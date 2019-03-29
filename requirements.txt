@@ -2,3 +2,5 @@ flask
 google-cloud-speech
 PyAudio
 SpeechRecognition
+numpy
+tensorflow
